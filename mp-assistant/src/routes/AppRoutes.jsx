@@ -7,6 +7,8 @@ import Profile from "../pages/Profile";
 import GroceryList from "../pages/GroceryList";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
+import Recipes from "../pages/Recipes";
+import MealPlanner from "../pages/MealPlanner";
 
 const AppRoutes = () => {
   return (
@@ -38,6 +40,18 @@ const AppRoutes = () => {
       <Route path="/grocery" element={
         <MainLayout>
           <GroceryList />
+        </MainLayout>
+      } />
+
+      <Route path="/recipes" element={
+        <MainLayout>
+          <Recipes />
+        </MainLayout>
+      } />
+
+      <Route path="/planner" element={
+        <MainLayout>
+          <MealPlanner />
         </MainLayout>
       } />
 

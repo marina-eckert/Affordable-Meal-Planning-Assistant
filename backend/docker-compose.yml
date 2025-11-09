@@ -1,0 +1,29 @@
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sqlserver
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "StrongPassword@1"
+    ports:
+      - "1488:1433"
+    volumes:
+      - sqltest:/var/opt/mssql
+  
+  gateway-service:
+    container_name: gateway-service
+    build:
+      context: ./src
+      dockerfile: MPA.Gateway/Dockerfile
+    ports:
+      - "1500:8080"
+
+  auth-service:
+    container_name: auth-service
+    build:
+      context: ./src
+      dockerfile: MPA.Auth.API/Dockerfile
+    ports:
+      - "1501:8080"
+volumes:
+  sqltest:

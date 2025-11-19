@@ -17,6 +17,10 @@ services:
       dockerfile: MPA.API/Dockerfile
     ports:
       - "1501:8080"
+    environment:
+    - OpenAI__ApiKey=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
 
 volumes:
   sqltest:
+
+  

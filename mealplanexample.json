@@ -1,0 +1,350 @@
+{
+  "id": "bf55e40e-8f31-4027-8e7c-2a7d951a046c",
+  "weekStart": "2025-11-17",
+  "userId": "0a32f753-a5f6-4f63-8f88-08de2700edd7",
+  "days": [
+    {
+      "id": "3c5041eb-f6c2-4dbd-a746-ddd37b19874a",
+      "date": "2025-11-17",
+      "mealPlanId": "bf55e40e-8f31-4027-8e7c-2a7d951a046c",
+      "items": [
+        {
+          "id": "7e1f7d37-3c3a-47a1-9ae1-a65b2ad75a85",
+          "mealType": 0,
+          "mealPlanDayId": "3c5041eb-f6c2-4dbd-a746-ddd37b19874a",
+          "recipe": {
+            "id": "c46ce678-39fb-424e-a03a-9d451eed1cce",
+            "name": "Beef Pasta Bolognese",
+            "imageUrl": "/images/recipes/bolognese.jpg",
+            "durationInMinutes": 30,
+            "price": 7.4,
+            "rating": 4.8,
+            "ingredients": []
+          }
+        },
+        {
+          "id": "8f0e44e1-4d18-4a39-95a1-e394ff90196a",
+          "mealType": 1,
+          "mealPlanDayId": "3c5041eb-f6c2-4dbd-a746-ddd37b19874a",
+          "recipe": {
+            "id": "cae0a47e-25cb-476f-958e-cd3cc0a294a0",
+            "name": "Fruit Smoothie",
+            "imageUrl": "/images/recipes/smoothie.jpg",
+            "durationInMinutes": 3,
+            "price": 2.5,
+            "rating": 4.2,
+            "ingredients": []
+          }
+        },
+        {
+          "id": "cb58c3a2-cdda-4012-abbb-363c64624112",
+          "mealType": 2,
+          "mealPlanDayId": "3c5041eb-f6c2-4dbd-a746-ddd37b19874a",
+          "recipe": {
+            "id": "ae7c1cee-67c6-4328-9691-1748fe9914bd",
+            "name": "Tofu Vegetable Bowl",
+            "imageUrl": "/images/recipes/tofu-bowl.jpg",
+            "durationInMinutes": 18,
+            "price": 5.2,
+            "rating": 4.5,
+            "ingredients": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "8fa28948-46f5-415b-bcf3-fc4e35687f87",
+      "date": "2025-11-18",
+      "mealPlanId": "bf55e40e-8f31-4027-8e7c-2a7d951a046c",
+      "items": [
+        {
+          "id": "9525fb9d-0fcc-4c71-a8f1-ed24d81bfebe",
+          "mealType": 0,
+          "mealPlanDayId": "8fa28948-46f5-415b-bcf3-fc4e35687f87",
+          "recipe": {
+            "id": "8c080452-a13d-4015-ad1f-8ed5561d2927",
+            "name": "Chicken Caesar Salad",
+            "imageUrl": "/images/recipes/caesar-salad.jpg",
+            "durationInMinutes": 12,
+            "price": 5.99,
+            "rating": 4.7,
+            "ingredients": []
+          }
+        },
+        {
+          "id": "a4b74351-fc53-4b7d-a226-9aba8247a43e",
+          "mealType": 1,
+          "mealPlanDayId": "8fa28948-46f5-415b-bcf3-fc4e35687f87",
+          "recipe": {
+            "id": "6f973daa-0923-48e1-832a-131b8309c2ca",
+            "name": "Vegetable Stir Fry",
+            "imageUrl": "/images/recipes/vegetable-stir-fry.jpg",
+            "durationInMinutes": 15,
+            "price": 4.2,
+            "rating": 4.5,
+            "ingredients": []
+          }
+        },
+        {
+          "id": "26da3295-c92c-4910-8483-e2d2d7ce5e9b",
+          "mealType": 2,
+          "mealPlanDayId": "8fa28948-46f5-415b-bcf3-fc4e35687f87",
+          "recipe": {
+            "id": "ae7c1cee-67c6-4328-9691-1748fe9914bd",
+            "name": "Tofu Vegetable Bowl",
+            "imageUrl": "/images/recipes/tofu-bowl.jpg",
+            "durationInMinutes": 18,
+            "price": 5.2,
+            "rating": 4.5,
+            "ingredients": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "86f09f4d-448e-43df-8999-c2fdd1cad557",
+      "date": "2025-11-19",
+      "mealPlanId": "bf55e40e-8f31-4027-8e7c-2a7d951a046c",
+      "items": [
+        {
+          "id": "fe9e0fd0-6f98-4c1c-b09d-0a740c349bcc",
+          "mealType": 0,
+          "mealPlanDayId": "86f09f4d-448e-43df-8999-c2fdd1cad557",
+          "recipe": {
+            "id": "0c217f91-4240-479d-abe7-c81900e8d434",
+            "name": "Omelette",
+            "imageUrl": "/images/recipes/omelette.jpg",
+            "durationInMinutes": 8,
+            "price": 1.8,
+            "rating": 4.3,
+            "ingredients": []
+          }
+        },
+        {
+          "id": "117026c0-93d5-4768-8a23-75c9958c53c6",
+          "mealType": 1,
+          "mealPlanDayId": "86f09f4d-448e-43df-8999-c2fdd1cad557",
+          "recipe": {
+            "id": "cca7e6f4-788d-472d-85fc-21f75fb67ba4",
+            "name": "Avocado Toast",
+            "imageUrl": "/images/recipes/avocado-toast.jpg",
+            "durationInMinutes": 5,
+            "price": 2.9,
+            "rating": 4.4,
+            "ingredients": []
+          }
+        },
+        {
+          "id": "01a9b894-aa0d-4acb-bf2e-5ec4ec83bf55",
+          "mealType": 2,
+          "mealPlanDayId": "86f09f4d-448e-43df-8999-c2fdd1cad557",
+          "recipe": {
+            "id": "6f973daa-0923-48e1-832a-131b8309c2ca",
+            "name": "Vegetable Stir Fry",
+            "imageUrl": "/images/recipes/vegetable-stir-fry.jpg",
+            "durationInMinutes": 15,
+            "price": 4.2,
+            "rating": 4.5,
+            "ingredients": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "522d066a-6627-4bf4-a047-459a7309695c",
+      "date": "2025-11-20",
+      "mealPlanId": "bf55e40e-8f31-4027-8e7c-2a7d951a046c",
+      "items": [
+        {
+          "id": "809fb397-3fd2-46c1-8b4b-e3994ede5561",
+          "mealType": 0,
+          "mealPlanDayId": "522d066a-6627-4bf4-a047-459a7309695c",
+          "recipe": {
+            "id": "5b177a17-9df1-4a9a-994d-2c87c8601766",
+            "name": "Shrimp Noodle Bowl",
+            "imageUrl": "/images/recipes/shrimp-noodles.jpg",
+            "durationInMinutes": 18,
+            "price": 8.5,
+            "rating": 4.8,
+            "ingredients": []
+          }
+        },
+        {
+          "id": "fde73cf7-1715-4de8-8beb-613aa1052f7e",
+          "mealType": 1,
+          "mealPlanDayId": "522d066a-6627-4bf4-a047-459a7309695c",
+          "recipe": {
+            "id": "06930166-f7de-4dd2-bc9e-128a39db14e0",
+            "name": "Greek Salad",
+            "imageUrl": "/images/recipes/greek-salad.jpg",
+            "durationInMinutes": 10,
+            "price": 3.9,
+            "rating": 4.6,
+            "ingredients": []
+          }
+        },
+        {
+          "id": "4112abfb-9d49-4ddb-8d21-10986b2a53a1",
+          "mealType": 2,
+          "mealPlanDayId": "522d066a-6627-4bf4-a047-459a7309695c",
+          "recipe": {
+            "id": "8c080452-a13d-4015-ad1f-8ed5561d2927",
+            "name": "Chicken Caesar Salad",
+            "imageUrl": "/images/recipes/caesar-salad.jpg",
+            "durationInMinutes": 12,
+            "price": 5.99,
+            "rating": 4.7,
+            "ingredients": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "4c8a4001-431e-432c-961a-cae1827a9d3d",
+      "date": "2025-11-21",
+      "mealPlanId": "bf55e40e-8f31-4027-8e7c-2a7d951a046c",
+      "items": [
+        {
+          "id": "6c6b3d4c-f28c-4087-a9aa-1449714eed95",
+          "mealType": 0,
+          "mealPlanDayId": "4c8a4001-431e-432c-961a-cae1827a9d3d",
+          "recipe": {
+            "id": "06930166-f7de-4dd2-bc9e-128a39db14e0",
+            "name": "Greek Salad",
+            "imageUrl": "/images/recipes/greek-salad.jpg",
+            "durationInMinutes": 10,
+            "price": 3.9,
+            "rating": 4.6,
+            "ingredients": []
+          }
+        },
+        {
+          "id": "8ad82ff6-4073-4e4a-aaa9-a3e8d74fc40a",
+          "mealType": 1,
+          "mealPlanDayId": "4c8a4001-431e-432c-961a-cae1827a9d3d",
+          "recipe": {
+            "id": "5b177a17-9df1-4a9a-994d-2c87c8601766",
+            "name": "Shrimp Noodle Bowl",
+            "imageUrl": "/images/recipes/shrimp-noodles.jpg",
+            "durationInMinutes": 18,
+            "price": 8.5,
+            "rating": 4.8,
+            "ingredients": []
+          }
+        },
+        {
+          "id": "2426a037-c50e-43e7-9dd5-e4f5475df5de",
+          "mealType": 2,
+          "mealPlanDayId": "4c8a4001-431e-432c-961a-cae1827a9d3d",
+          "recipe": {
+            "id": "0c217f91-4240-479d-abe7-c81900e8d434",
+            "name": "Omelette",
+            "imageUrl": "/images/recipes/omelette.jpg",
+            "durationInMinutes": 8,
+            "price": 1.8,
+            "rating": 4.3,
+            "ingredients": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "21d20cef-526a-456e-a106-a0a687843a26",
+      "date": "2025-11-22",
+      "mealPlanId": "bf55e40e-8f31-4027-8e7c-2a7d951a046c",
+      "items": [
+        {
+          "id": "81276dd4-081a-42ee-876d-3a2213419d55",
+          "mealType": 0,
+          "mealPlanDayId": "21d20cef-526a-456e-a106-a0a687843a26",
+          "recipe": {
+            "id": "8c080452-a13d-4015-ad1f-8ed5561d2927",
+            "name": "Chicken Caesar Salad",
+            "imageUrl": "/images/recipes/caesar-salad.jpg",
+            "durationInMinutes": 12,
+            "price": 5.99,
+            "rating": 4.7,
+            "ingredients": []
+          }
+        },
+        {
+          "id": "3ac4952d-2a81-40f0-908a-b321840fe362",
+          "mealType": 1,
+          "mealPlanDayId": "21d20cef-526a-456e-a106-a0a687843a26",
+          "recipe": {
+            "id": "cca7e6f4-788d-472d-85fc-21f75fb67ba4",
+            "name": "Avocado Toast",
+            "imageUrl": "/images/recipes/avocado-toast.jpg",
+            "durationInMinutes": 5,
+            "price": 2.9,
+            "rating": 4.4,
+            "ingredients": []
+          }
+        },
+        {
+          "id": "925f4d61-39f3-4d87-a906-dcfd09da04ed",
+          "mealType": 2,
+          "mealPlanDayId": "21d20cef-526a-456e-a106-a0a687843a26",
+          "recipe": {
+            "id": "5b177a17-9df1-4a9a-994d-2c87c8601766",
+            "name": "Shrimp Noodle Bowl",
+            "imageUrl": "/images/recipes/shrimp-noodles.jpg",
+            "durationInMinutes": 18,
+            "price": 8.5,
+            "rating": 4.8,
+            "ingredients": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "761d218a-1e12-4389-978f-a2770b140951",
+      "date": "2025-11-23",
+      "mealPlanId": "bf55e40e-8f31-4027-8e7c-2a7d951a046c",
+      "items": [
+        {
+          "id": "aa1b9d0c-95b8-4c7c-98e8-05f4cb64a2e1",
+          "mealType": 0,
+          "mealPlanDayId": "761d218a-1e12-4389-978f-a2770b140951",
+          "recipe": {
+            "id": "cae0a47e-25cb-476f-958e-cd3cc0a294a0",
+            "name": "Fruit Smoothie",
+            "imageUrl": "/images/recipes/smoothie.jpg",
+            "durationInMinutes": 3,
+            "price": 2.5,
+            "rating": 4.2,
+            "ingredients": []
+          }
+        },
+        {
+          "id": "f02bac11-9325-4d4c-bd30-e974da58a59f",
+          "mealType": 1,
+          "mealPlanDayId": "761d218a-1e12-4389-978f-a2770b140951",
+          "recipe": {
+            "id": "8c080452-a13d-4015-ad1f-8ed5561d2927",
+            "name": "Chicken Caesar Salad",
+            "imageUrl": "/images/recipes/caesar-salad.jpg",
+            "durationInMinutes": 12,
+            "price": 5.99,
+            "rating": 4.7,
+            "ingredients": []
+          }
+        },
+        {
+          "id": "629a5656-230b-486b-97e4-9f8b76347028",
+          "mealType": 2,
+          "mealPlanDayId": "761d218a-1e12-4389-978f-a2770b140951",
+          "recipe": {
+            "id": "96a1415d-9210-4bf9-af8f-7ba3c60775a1",
+            "name": "Salmon with Vegetables",
+            "imageUrl": "/images/recipes/salmon-veggies.jpg",
+            "durationInMinutes": 20,
+            "price": 9.99,
+            "rating": 4.9,
+            "ingredients": []
+          }
+        }
+      ]
+    }
+  ]
+}

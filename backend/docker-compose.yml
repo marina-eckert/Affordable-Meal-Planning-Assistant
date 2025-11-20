@@ -8,15 +8,15 @@ services:
     ports:
       - "1488:1433"
     volumes:
-      - sqltest:/var/opt/mssql
+      - sqlvol:/var/opt/mssql
   
   backend-service:
     container_name: backend-service
     build:
-      context: ./src
-      dockerfile: MPA.API/Dockerfile
+      context: ./src/MPA.API/
+      dockerfile: Dockerfile
     ports:
       - "1501:8080"
 
 volumes:
-  sqltest:
+  sqlvol:

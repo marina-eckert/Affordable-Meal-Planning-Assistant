@@ -22,7 +22,5 @@ public class DatabaseSeeder : IDatabaseSeeder
         {
             await entitySeeder.SeedAsync(_context);
         }
-
-        await _context.SaveChangesAsync();
     }
 }

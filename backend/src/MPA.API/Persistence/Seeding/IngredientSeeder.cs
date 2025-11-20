@@ -104,6 +104,7 @@ public class IngredientSeeder : IEntitySeeder
         };
 
         await context.Ingredients.AddRangeAsync(ingredients);
+        await context.SaveChangesAsync();
     }
     
     private static Ingredient New(string name) => new() { Id = Guid.NewGuid(), Name = name };

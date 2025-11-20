@@ -250,6 +250,7 @@ public class RecipeSeeder : IEntitySeeder
         };
 
         await context.Recipes.AddRangeAsync(recipes);
+        await context.SaveChangesAsync();
         return;
 
         Ingredient GetIngredient(string name) =>

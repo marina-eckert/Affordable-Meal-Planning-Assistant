@@ -41,7 +41,9 @@ public static class DependencyRegistrar
     {
         services.AddDbContext<AppDbContext>(config =>
         {
-            config.UseSqlServer(configuration.GetConnectionString(ConfigurationKeys.DbConnectionString));
+            config.UseSqlServer(
+                configuration.GetConnectionString(ConfigurationKeys.DbConnectionString),
+                options => options.EnableRetryOnFailure());
         });
     }
 

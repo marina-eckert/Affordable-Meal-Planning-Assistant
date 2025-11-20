@@ -9,6 +9,7 @@ import Login from "../pages/Login";
 import Register from "../pages/Register";
 import Recipes from "../pages/Recipes";
 import MealPlanner from "../pages/MealPlanner";
+import Insights from "../pages/Insights";
 
 const AppRoutes = () => {
   return (
@@ -54,7 +55,11 @@ const AppRoutes = () => {
           <MealPlanner />
         </MainLayout>
       } />
-
+    <Route path="/insights" element={
+        <MainLayout>
+          <Insights />
+        </MainLayout>
+      } />
     </Routes>
   );
 };

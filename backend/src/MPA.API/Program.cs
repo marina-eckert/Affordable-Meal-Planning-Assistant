@@ -63,6 +63,8 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
+builder.Services.AddControllers();
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
@@ -83,6 +85,7 @@ app.UseSwaggerUI(c =>
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.MapControllers();
 
 app.MapPost("/api/auth/login", async (
     [FromBody] UserLoginDto userLoginDto, IAuthService authService) =>

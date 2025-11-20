@@ -7,11 +7,25 @@ using MPA.API;
 using MPA.API.DTOs;
 using MPA.API.Interfaces;
 using MPA.API.Persistence.Context;
+using MPA.API.Services; 
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.ConfigureApplicationDependencies();
 builder.Services.ConfigurePersistenceDependencies(builder.Configuration);
+
+//Register Gemini Service ---
+builder.Services.AddHttpClient<GeminiService>();
+
+//Configure CORS ---
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll",
+        policy => policy
+            .AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader());
+});
 
 builder.Services
     .AddAuthorization()
@@ -76,6 +90,9 @@ using (var scope = app.Services.CreateScope())
     await seeder.SeedAsync();
 }
 
+//Enable CORS Middleware ---
+app.UseCors("AllowAll");
+
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
@@ -85,7 +102,6 @@ app.UseSwaggerUI(c =>
 
 app.UseAuthentication();
 app.UseAuthorization();
-app.MapControllers();
 
 app.MapPost("/api/auth/login", async (
     [FromBody] UserLoginDto userLoginDto, IAuthService authService) =>
@@ -104,6 +120,19 @@ app.MapPost("/api/auth/signup", async (
 })
 .WithName("Signup")
 .WithTags("Auth");
+
+// --- 5. ADDED: The Chat Endpoint ---
+app.MapPost("/api/chat", async (
+    [FromBody] ChatRequestDto request, 
+    GeminiService geminiService) =>
+{
+    var reply = await geminiService.GetChatResponseAsync(request.Message);
+    return Results.Ok(new ChatResponseDto(reply));
+})
+.WithName("ChatWithGemini")
+.WithTags("Chat");
+
+// ... (Rest of your existing endpoints below remain unchanged) ...
 
 app.MapGet("/api/users/{id}", async (
     [FromRoute] Guid id, IUserService userService) =>

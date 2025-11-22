@@ -1,6 +1,5 @@
 import { NavLink } from "react-router-dom";
 import {
-  LayoutDashboard,
   Calendar,
   BookOpen,
   ShoppingCart,
@@ -12,11 +11,6 @@ import icon from "../assets/images/icon.png";
 
 export default function Sidebar() {
   const menuItems = [
-    {
-      name: "Dashboard",
-      icon: <LayoutDashboard size={18} />,
-      path: "/dashboard",
-    },
     { name: "Meal Planner", icon: <Calendar size={18} />, path: "/planner" },
     { name: "Recipes", icon: <BookOpen size={18} />, path: "/recipes" },
     {

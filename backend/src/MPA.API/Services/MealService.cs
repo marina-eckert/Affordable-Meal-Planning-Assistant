@@ -86,64 +86,68 @@ public class MealService : IMealService
     }
     
     public async Task<MealPlanDayItemDto> AddMealPlanDayItemAsync(
-        Guid userId, 
-        AddMealPlanDayItemDto addMealPlanDayItemDto)
+    Guid userId, 
+    AddMealPlanDayItemDto addMealPlanDayItemDto)
+{
+    var weekStart = addMealPlanDayItemDto.Date
+        .AddDays(-(int)addMealPlanDayItemDto.Date.DayOfWeek + (addMealPlanDayItemDto.Date.DayOfWeek == DayOfWeek.Sunday ? -6 : 1));
+
+    var mealPlan = await _context.MealPlans
+        .Include(mp => mp.Days)
+        .ThenInclude(d => d.Items)
+        .FirstOrDefaultAsync(mp => mp.UserId == userId && mp.WeekStart == weekStart);
+
+    if (mealPlan is null)
     {
-        var weekStart = addMealPlanDayItemDto.Date
-            .AddDays(-(int)addMealPlanDayItemDto.Date.DayOfWeek + (addMealPlanDayItemDto.Date.DayOfWeek == DayOfWeek.Sunday ? -6 : 1));
-
-        var mealPlan = await _context.MealPlans
-            .Include(mp => mp.Days)
-            .ThenInclude(d => d.Items)
-            .FirstOrDefaultAsync(mp => mp.UserId == userId && mp.WeekStart == weekStart);
-
-        if (mealPlan is null)
-        {
-            mealPlan = new MealPlan
-            {
-                Id = Guid.NewGuid(),
-                UserId = userId,
-                WeekStart = weekStart
-            };
-            await _context.MealPlans.AddAsync(mealPlan);
-        }
-
-        var day = mealPlan.Days.FirstOrDefault(d => d.Date == addMealPlanDayItemDto.Date);
-        if (day is null)
-        {
-            day = new MealPlanDay
-            {
-                Id = Guid.NewGuid(),
-                Date = addMealPlanDayItemDto.Date,
-                MealPlanId = mealPlan.Id
-            };
-            mealPlan.Days.Add(day);
-        }
-
-        var recipe = await _context.Recipes.FindAsync(addMealPlanDayItemDto.Date);
-        if (recipe is null)
-        {
-            throw new ApplicationException("Recipe was not found.");
-        }
-
-        var mealItem = new MealPlanDayItem
+        mealPlan = new MealPlan
         {
             Id = Guid.NewGuid(),
-            MealType = addMealPlanDayItemDto.MealType,
-            RecipeId = addMealPlanDayItemDto.RecipeId,
-            MealPlanDayId = day.Id
+            UserId = userId,
+            WeekStart = weekStart
         };
-        day.Items.Add(mealItem);
-
-        await _context.SaveChangesAsync();
-
-        return new MealPlanDayItemDto(
-            mealItem.Id,
-            mealItem.MealType,
-            mealItem.MealPlanDayId,
-            new RecipeDto(recipe.Id, recipe.Name, recipe.ImageUrl, recipe.DurationMinutes, recipe.Price, recipe.Rating, []));
+        _context.MealPlans.Add(mealPlan);
+        await _context.SaveChangesAsync(); // Save meal plan first
     }
 
+    var day = mealPlan.Days.FirstOrDefault(d => d.Date == addMealPlanDayItemDto.Date);
+    if (day is null)
+    {
+        day = new MealPlanDay
+        {
+            Id = Guid.NewGuid(),
+            Date = addMealPlanDayItemDto.Date,
+            MealPlanId = mealPlan.Id
+        };
+        _context.MealPlanDays.Add(day);
+        await _context.SaveChangesAsync(); // Save day first
+    }
+
+    var recipe = await _context.Recipes
+        .Include(r => r.Ingredients)
+        .FirstOrDefaultAsync(r => r.Id == addMealPlanDayItemDto.RecipeId);
+    
+    if (recipe is null)
+    {
+        throw new ApplicationException("Recipe was not found.");
+    }
+
+    var mealItem = new MealPlanDayItem
+    {
+        Id = Guid.NewGuid(),
+        MealType = addMealPlanDayItemDto.MealType,
+        RecipeId = addMealPlanDayItemDto.RecipeId,
+        MealPlanDayId = day.Id
+    };
+    
+    _context.MealPlanDayItems.Add(mealItem);
+    await _context.SaveChangesAsync();
+
+    return new MealPlanDayItemDto(
+        mealItem.Id,
+        mealItem.MealType,
+        mealItem.MealPlanDayId,
+        MapToModel(recipe));
+}
     
     public async Task UpdateMealPlanDayItemAsync(
         Guid mealPlanDayItemId, 

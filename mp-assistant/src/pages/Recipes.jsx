@@ -1,96 +1,34 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import "./recipes.css";
+import { recipesApi, groceryApi } from "../services/api";
 
-const SEED = [
-  {
-    id: "r1",
-    title: "Yummy Smoothie Bowl",
-    categories: ["breakfast"],
-    minutes: 10,
-    pricePerServing: 2.1,
-    rating: 4.5,
-    image:
-      "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=1200&auto=format&fit=crop",
-    tags: ["vegetarian", "quick"],
-  },
-  {
-    id: "r2",
-    title: "Salmon w/ Quinoa",
-    categories: ["dinner"],
-    minutes: 20,
-    pricePerServing: 3.9,
-    rating: 4.7,
-    image:
-      "https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=1200&auto=format&fit=crop",
-    tags: ["high protein"],
-  },
-  {
-    id: "r3",
-    title: "Homemade Apple Pie",
-    categories: ["dessert"],
-    minutes: 60,
-    pricePerServing: 1.8,
-    rating: 4.2,
-    image:
-      "https://images.unsplash.com/photo-1505253224300-0d5d80fa2f63?q=80&w=1200&auto=format&fit=crop",
-    tags: ["bake"],
-  },
-  {
-    id: "r4",
-    title: "Superfood Green Juice",
-    categories: ["drinks"],
-    minutes: 5,
-    pricePerServing: 1.1,
-    rating: 4.0,
-    image:
-      "https://images.unsplash.com/photo-1505575972945-2804b5c00ce0?q=80&w=1200&auto=format&fit=crop",
-    tags: ["vegan", "quick"],
-  },
-  {
-    id: "r5",
-    title: "Blueberry Avocado Pasta",
-    categories: ["lunch"],
-    minutes: 18,
-    pricePerServing: 2.8,
-    rating: 4.1,
-    image:
-      "https://images.unsplash.com/photo-1504754524776-8f4f37790ca0?q=80&w=1200&auto=format&fit=crop",
-    tags: ["budget"],
-  },
-  {
-    id: "r6",
-    title: "Oregano Pizza",
-    categories: ["lunch", "dinner"],
-    minutes: 25,
-    pricePerServing: 2.4,
-    rating: 4.6,
-    image:
-      "https://images.unsplash.com/photo-1548365328-9f547fb0953f?q=80&w=1200&auto=format&fit=crop",
-    tags: ["crowd-pleaser"],
-  },
-  {
-    id: "r7",
-    title: "Raspberry Waffles",
-    categories: ["breakfast"],
-    minutes: 15,
-    pricePerServing: 1.9,
-    rating: 4.3,
-    image:
-      "https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?q=80&w=1200&auto=format&fit=crop",
-    tags: ["sweet", "brunch"],
-  },
-  {
-    id: "r8",
-    title: "Chickpea Minestrone",
-    categories: ["dinner"],
-    minutes: 30,
-    pricePerServing: 2.2,
-    rating: 4.4,
-    image:
-      "https://images.unsplash.com/photo-1551183053-bf91a1d81141?q=80&w=1200&auto=format&fit=crop",
-    tags: ["budget", "fiber"],
-  },
-];
+import smoothieBowl from "../assets/images/smoothie-bowl.jpeg";
+import salmonQuinoa from "../assets/images/salmon-quinoa.jpg";
+import chickenRiceBowl from "../assets/images/chicken-rice.webp";
+import shrimpNoodleBowl from "../assets/images/shrimp-noodles.jpg";
+import vegStirFry from "../assets/images/veg-stir-fry.jpg";
+import lentilSoup from "../assets/images/lentil-soup.jpg";
+import beefPasta from "../assets/images/beef-pasta.jpg";
+import greekSalad from "../assets/images/greek-salad.jpg";
+import chickenSalad from "../assets/images/ceasar-salad.jpg";
+import avocadoToast from "../assets/images/avocado-toast.jpg";
+import omelette from "../assets/images/omelette.jpg";
+import tofuBowl from "../assets/images/tofu-bowl.jpg";
+
+const IMAGE_MAP = {
+  "Salmon with Vegetables": salmonQuinoa,
+  "Chicken Rice Bowl": chickenRiceBowl,
+  "Vegetable Stir Fry": vegStirFry,
+  "Lentil Soup": lentilSoup,
+  "Shrimp Noodle Bowl": shrimpNoodleBowl,
+  "Beef Pasta Bolognese": beefPasta,
+  "Greek Salad": greekSalad,
+  "Chicken Caesar Salad": chickenSalad,
+  "Avocado Toast": avocadoToast,
+  Omelette: omelette,
+  "Tofu Vegetable Bowl": tofuBowl,
+  "Fruit Smoothie": smoothieBowl,
+};
 
 const CATEGORIES = [
   { key: "all", label: "all recipes" },
@@ -104,24 +42,58 @@ const CATEGORIES = [
 ];
 
 export default function RecipesPage() {
-  const [recipes, setRecipes] = useState(SEED);
-  const [active, setActive] = useState("all"); // "all" | "favorites" | category
+  const [recipes, setRecipes] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [active, setActive] = useState("all");
   const [query, setQuery] = useState("");
-  const [view, setView] = useState("gallery"); // "gallery" | "list"
-  const [sortKey, setSortKey] = useState("relevance"); // "relevance" | "time" | "cost" | "rating"
-  const [budgetFilter, setBudgetFilter] = useState(null); // number | null
+  const [view, setView] = useState("gallery");
+  const [sortKey, setSortKey] = useState("relevance");
+  const [budgetFilter, setBudgetFilter] = useState(null);
+  const [openRecipe, setOpenRecipe] = useState(null);
+  const [addingToGrocery, setAddingToGrocery] = useState(null);
+
+  const userId = localStorage.getItem("userId");
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const loadData = async () => {
+    try {
+      setLoading(true);
+      const backendRecipes = await recipesApi.getAll();
+
+      const transformedRecipes = backendRecipes.map((recipe) => ({
+        id: recipe.id,
+        title: recipe.name,
+        categories: ["lunch"],
+        minutes: recipe.durationInMinutes,
+        pricePerServing: recipe.price,
+        rating: recipe.rating,
+        image: IMAGE_MAP[recipe.name] || smoothieBowl,
+        tags: [],
+        ingredients: recipe.ingredients.map((ing) => ing.name),
+        recipe: `Delicious ${recipe.name} recipe.`,
+        isFavorite: false,
+        addedToGrocery: false,
+        backendIngredients: recipe.ingredients,
+      }));
+
+      setRecipes(transformedRecipes);
+    } catch (err) {
+      console.error("Failed to load recipes:", err);
+      alert("Failed to load recipes. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const filtered = useMemo(() => {
     let r = [...recipes];
-
-    // category
-    if (active === "favorites") {
-      r = r.filter((x) => x.isFavorite);
-    } else if (active !== "all") {
+    if (active === "favorites") r = r.filter((x) => x.isFavorite);
+    else if (active !== "all")
       r = r.filter((x) => x.categories.includes(active));
-    }
 
-    // search
     if (query.trim()) {
       const q = query.toLowerCase();
       r = r.filter(
@@ -131,12 +103,9 @@ export default function RecipesPage() {
       );
     }
 
-    // budget
-    if (budgetFilter != null) {
+    if (budgetFilter != null)
       r = r.filter((x) => x.pricePerServing <= budgetFilter);
-    }
 
-    // sort
     switch (sortKey) {
       case "time":
         r.sort((a, b) => a.minutes - b.minutes);
@@ -153,40 +122,121 @@ export default function RecipesPage() {
     return r;
   }, [recipes, active, query, sortKey, budgetFilter]);
 
-  const toggleFavorite = (id) => {
+  const toggleFavorite = (id) =>
     setRecipes((prev) =>
       prev.map((r) => (r.id === id ? { ...r, isFavorite: !r.isFavorite } : r))
     );
+
+  const addIngredientsToGrocery = async (recipeId) => {
+    const recipe = recipes.find((r) => r.id === recipeId);
+    if (!recipe || !recipe.backendIngredients) return;
+
+    setAddingToGrocery(recipeId);
+    try {
+      for (const ingredient of recipe.backendIngredients) {
+        await groceryApi.addItem(userId, ingredient.id, 1);
+      }
+
+      setRecipes((prev) =>
+        prev.map((r) =>
+          r.id === recipeId ? { ...r, addedToGrocery: true } : r
+        )
+      );
+
+      alert(
+        `All ingredients from "${recipe.title}" added to your grocery list!`
+      );
+    } catch (err) {
+      console.error("Failed to add ingredients:", err);
+      alert("Failed to add some ingredients. Please try again.");
+    } finally {
+      setAddingToGrocery(null);
+    }
   };
 
-  const toggleGrocery = (id) => {
-    setRecipes((prev) =>
-      prev.map((r) => (r.id === id ? { ...r, addedToGrocery: !r.addedToGrocery } : r))
+  if (loading) {
+    return (
+      <div className="recipes-wrap">
+        <div style={{ padding: "2rem", textAlign: "center" }}>
+          <p>Loading recipes...</p>
+        </div>
+      </div>
     );
-    // TODO: connect to your grocery list store/api
-  };
+  }
 
   return (
     <div className="recipes-wrap">
+      {/* Modal */}
+      {openRecipe && (
+        <div className="modal-overlay" onClick={() => setOpenRecipe(null)}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <button className="modal-close" onClick={() => setOpenRecipe(null)}>
+              ✕
+            </button>
+            <img className="modal-img" src={openRecipe.image} alt="" />
+            <h2>{openRecipe.title}</h2>
+            <p className="modal-meta">
+              {openRecipe.minutes} min · $
+              {openRecipe.pricePerServing.toFixed(2)}/serving
+            </p>
+            <div className="chips">
+              {openRecipe.categories.map((c) => (
+                <span className={`chip cat-${c}`} key={c}>
+                  {c}
+                </span>
+              ))}
+              {(openRecipe.tags || []).map((t) => (
+                <span className="chip subtle" key={t}>
+                  {t}
+                </span>
+              ))}
+            </div>
+            <h3>Ingredients</h3>
+            <ul className="modal-list">
+              {openRecipe.ingredients.map((i, idx) => (
+                <li key={idx}>{i}</li>
+              ))}
+            </ul>
+            <h3>Instructions</h3>
+            <p>{openRecipe.recipe}</p>
+            <button
+              className="add-btn"
+              style={{ marginTop: "1rem", width: "100%" }}
+              onClick={(e) => {
+                e.stopPropagation();
+                addIngredientsToGrocery(openRecipe.id);
+              }}
+              disabled={
+                addingToGrocery === openRecipe.id || openRecipe.addedToGrocery
+              }
+            >
+              {addingToGrocery === openRecipe.id
+                ? "Adding..."
+                : openRecipe.addedToGrocery
+                ? "✓ Added to Grocery List"
+                : "Add All Ingredients to Grocery List"}
+            </button>
+          </div>
+        </div>
+      )}
+
       <header className="recipes-header">
         <div>
           <h1 className="recipes-title">Recipes</h1>
-          <p className="recipes-sub">Browse, filter, and add meals to your plan.</p>
+          <p className="recipes-sub">
+            Browse, filter, and add meals to your plan.
+          </p>
         </div>
-
         <div className="recipes-actions">
           <div className="input icon-left">
             <span className="icon">🔎</span>
             <input
-              aria-label="Search recipes"
-              placeholder="Search recipes, tags, ingredients…"
+              placeholder="Search recipes…"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
             />
           </div>
-
           <select
-            aria-label="Sort recipes"
             className="select"
             value={sortKey}
             onChange={(e) => setSortKey(e.target.value)}
@@ -196,35 +246,28 @@ export default function RecipesPage() {
             <option value="cost">Sort: Cost ($)</option>
             <option value="rating">Sort: Rating</option>
           </select>
-
           <select
-            aria-label="Budget filter"
             className="select"
             value={budgetFilter ?? ""}
-            onChange={(e) => setBudgetFilter(e.target.value ? Number(e.target.value) : null)}
+            onChange={(e) =>
+              setBudgetFilter(e.target.value ? Number(e.target.value) : null)
+            }
           >
             <option value="">Budget: Any</option>
             <option value="2">≤ $2.00</option>
             <option value="3">≤ $3.00</option>
             <option value="4">≤ $4.00</option>
           </select>
-
-          <div className="view-toggle" role="tablist" aria-label="View mode">
+          <div className="view-toggle">
             <button
-              role="tab"
-              aria-selected={view === "gallery"}
               className={view === "gallery" ? "active" : ""}
               onClick={() => setView("gallery")}
-              title="Gallery view"
             >
               ⬛ ⬛
             </button>
             <button
-              role="tab"
-              aria-selected={view === "list"}
               className={view === "list" ? "active" : ""}
               onClick={() => setView("list")}
-              title="List view"
             >
               ☰
             </button>
@@ -232,7 +275,7 @@ export default function RecipesPage() {
         </div>
       </header>
 
-      <nav className="recipes-tabs" aria-label="Recipe categories">
+      <nav className="recipes-tabs">
         {CATEGORIES.map(({ key, label }) => (
           <button
             key={key}
@@ -244,26 +287,29 @@ export default function RecipesPage() {
         ))}
       </nav>
 
+      {/* Gallery View */}
       {view === "gallery" ? (
-        <section className="recipes-grid" aria-live="polite">
+        <section className="recipes-grid">
           {filtered.map((r) => (
-            <article key={r.id} className="recipe-card">
+            <article
+              key={r.id}
+              className="recipe-card"
+              onClick={() => setOpenRecipe(r)}
+            >
               <button
                 className={`fav ${r.isFavorite ? "on" : ""}`}
-                onClick={() => toggleFavorite(r.id)}
-                aria-label={r.isFavorite ? "Remove from favorites" : "Add to favorites"}
-                title="Toggle favorite"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleFavorite(r.id);
+                }}
               >
                 ★
               </button>
-
               <div className="thumb">
-                {r.image ? <img src={r.image} alt="" aria-hidden="true" /> : <div className="placeholder" />}
+                <img src={r.image} alt="" />
               </div>
-
               <div className="body">
                 <h3 className="title">{r.title}</h3>
-
                 <div className="chips">
                   {r.categories.map((c) => (
                     <span className={`chip cat-${c}`} key={c}>
@@ -272,41 +318,53 @@ export default function RecipesPage() {
                   ))}
                   <span className="chip subtle">{r.minutes} Minutes</span>
                 </div>
-
                 <div className="meta">
                   <span className="price">${r.pricePerServing.toFixed(2)}</span>
                   <span className="per">per serving</span>
                 </div>
-
                 <div className="row">
                   <Rating value={r.rating} />
-                  <label className="grocery">
-                    <input
-                      type="checkbox"
-                      checked={!!r.addedToGrocery}
-                      onChange={() => toggleGrocery(r.id)}
-                    />
-                    <span>Add To Grocery List</span>
-                  </label>
+                  <button
+                    className="add-btn"
+                    style={{ fontSize: "0.85rem", padding: "0.4rem 0.8rem" }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      addIngredientsToGrocery(r.id);
+                    }}
+                    disabled={addingToGrocery === r.id || r.addedToGrocery}
+                  >
+                    {addingToGrocery === r.id
+                      ? "Adding..."
+                      : r.addedToGrocery
+                      ? "✓ Added"
+                      : "Add to Grocery"}
+                  </button>
                 </div>
               </div>
             </article>
           ))}
         </section>
       ) : (
-        <section className="recipes-list" aria-live="polite">
+        /* List View */
+        <section className="recipes-list">
           {filtered.map((r) => (
-            <div key={r.id} className="list-row">
+            <div
+              key={r.id}
+              className="list-row"
+              onClick={() => setOpenRecipe(r)}
+            >
               <div className="list-left">
                 <div className="list-thumb">
-                  {r.image ? <img src={r.image} alt="" /> : <div className="placeholder" />}
+                  <img src={r.image} alt="" />
                 </div>
                 <div className="list-text">
                   <div className="list-title">
                     <button
                       className={`fav small ${r.isFavorite ? "on" : ""}`}
-                      onClick={() => toggleFavorite(r.id)}
-                      aria-label={r.isFavorite ? "Remove from favorites" : "Add to favorites"}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleFavorite(r.id);
+                      }}
                     >
                       ★
                     </button>
@@ -326,7 +384,6 @@ export default function RecipesPage() {
                   </div>
                 </div>
               </div>
-
               <div className="list-right">
                 <Rating value={r.rating} />
                 <div className="list-meta">
@@ -334,14 +391,20 @@ export default function RecipesPage() {
                   <span>·</span>
                   <span>${r.pricePerServing.toFixed(2)}/serving</span>
                 </div>
-                <label className="grocery">
-                  <input
-                    type="checkbox"
-                    checked={!!r.addedToGrocery}
-                    onChange={() => toggleGrocery(r.id)}
-                  />
-                  <span>Add To Grocery List</span>
-                </label>
+                <button
+                  className="add-btn"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    addIngredientsToGrocery(r.id);
+                  }}
+                  disabled={addingToGrocery === r.id || r.addedToGrocery}
+                >
+                  {addingToGrocery === r.id
+                    ? "Adding..."
+                    : r.addedToGrocery
+                    ? "✓ Added to Grocery"
+                    : "Add to Grocery List"}
+                </button>
               </div>
             </div>
           ))}
@@ -356,7 +419,7 @@ function Rating({ value }) {
   const half = value - full >= 0.5;
   const empty = 5 - full - (half ? 1 : 0);
   return (
-    <div className="rating" aria-label={`Rating ${value} out of 5`}>
+    <div className="rating">
       {"★".repeat(full)}
       {half ? "⯪" : ""}
       {"☆".repeat(empty)}

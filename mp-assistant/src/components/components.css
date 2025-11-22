@@ -222,7 +222,7 @@
   background: #fff;
   border-radius: 12px;
   padding: 1.5rem;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
 .form label {
@@ -317,7 +317,7 @@
 }
 
 .grocery-item:hover {
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
 .item-name {

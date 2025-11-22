@@ -1,8 +1,6 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import MainLayout from "../layouts/MainLayout";
 import AuthLayout from "../layouts/AuthLayout";
-
-import Dashboard from "../pages/Dashboard";
 import Profile from "../pages/Profile";
 import GroceryList from "../pages/GroceryList";
 import Login from "../pages/Login";
@@ -14,55 +12,69 @@ import Insights from "../pages/Insights";
 const AppRoutes = () => {
   return (
     <Routes>
-      <Route path="/login" element={
-        <AuthLayout>
-          <Login />
-        </AuthLayout>
-      } />
-      
-      <Route path="/register" element={
-        <AuthLayout>
-          <Register />
-        </AuthLayout>
-      } />
-      
-      <Route path="/dashboard" element={
-        <MainLayout>
-          <Dashboard />
-        </MainLayout>
-      } />
+      <Route
+        path="/"
+        element={
+          <AuthLayout>
+            <Login />
+          </AuthLayout>
+        }
+      />
 
-      <Route path="/profile" element={
-        <MainLayout>
-          <Profile />
-        </MainLayout>
-      } />
+      <Route
+        path="/register"
+        element={
+          <AuthLayout>
+            <Register />
+          </AuthLayout>
+        }
+      />
 
-      <Route path="/grocery" element={
-        <MainLayout>
-          <GroceryList />
-        </MainLayout>
-      } />
+      <Route
+        path="/profile"
+        element={
+          <MainLayout>
+            <Profile />
+          </MainLayout>
+        }
+      />
 
-      <Route path="/recipes" element={
-        <MainLayout>
-          <Recipes />
-        </MainLayout>
-      } />
+      <Route
+        path="/grocery"
+        element={
+          <MainLayout>
+            <GroceryList />
+          </MainLayout>
+        }
+      />
 
-      <Route path="/planner" element={
-        <MainLayout>
-          <MealPlanner />
-        </MainLayout>
-      } />
-    <Route path="/insights" element={
-        <MainLayout>
-          <Insights />
-        </MainLayout>
-      } />
+      <Route
+        path="/recipes"
+        element={
+          <MainLayout>
+            <Recipes />
+          </MainLayout>
+        }
+      />
+
+      <Route
+        path="/planner"
+        element={
+          <MainLayout>
+            <MealPlanner />
+          </MainLayout>
+        }
+      />
+      <Route
+        path="/insights"
+        element={
+          <MainLayout>
+            <Insights />
+          </MainLayout>
+        }
+      />
     </Routes>
   );
 };
 
 export default AppRoutes;
-

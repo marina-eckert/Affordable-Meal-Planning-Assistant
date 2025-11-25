@@ -20,6 +20,7 @@ public static class DependencyRegistrar
         services.AddScoped<IRecipeService, RecipeService>();
         services.AddScoped<IGroceryItemService, GroceryItemervice>();
         services.AddScoped<IMealService, MealService>();
+        services.AddScoped<IFavoriteService, FavoriteService>();
 
         services.ConfigureOptions<JwtSettingsSetup>();
     }
@@ -57,6 +58,7 @@ public static class DependencyRegistrar
             config.Password.RequireLowercase = false;
             config.Password.RequireNonAlphanumeric = false;
             config.User.RequireUniqueEmail = true;
+            config.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+ ";
         })
             .AddEntityFrameworkStores<AppDbContext>();
     }

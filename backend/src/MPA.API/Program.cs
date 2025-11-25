@@ -84,7 +84,7 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    db.Database.Migrate();
+    db.Database.EnsureCreated();
 
     var seeder = scope.ServiceProvider.GetRequiredService<IDatabaseSeeder>();
     await seeder.SeedAsync();
@@ -100,14 +100,37 @@ app.UseSwaggerUI(c =>
     c.RoutePrefix = string.Empty;
 });
 
+var uploadsPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+if (!Directory.Exists(uploadsPath))
+{
+    Directory.CreateDirectory(uploadsPath);
+}
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(uploadsPath),
+    RequestPath = "/uploads"
+});
+
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapPost("/api/auth/login", async (
     [FromBody] UserLoginDto userLoginDto, IAuthService authService) =>
 {
-    var tokenResponse = await authService.UserLoginAsync(userLoginDto);
-    return Results.Ok(tokenResponse);
+    try
+    {
+        var tokenResponse = await authService.UserLoginAsync(userLoginDto);
+        return Results.Ok(tokenResponse);
+    }
+    catch (ApplicationException ex)
+    {
+        return Results.BadRequest(ex.Message);
+    }
+    catch (Exception)
+    {
+        return Results.StatusCode(500);
+    }
 })
 .WithName("Login")
 .WithTags("Auth");
@@ -115,8 +138,19 @@ app.MapPost("/api/auth/login", async (
 app.MapPost("/api/auth/signup", async (
     [FromBody] UserSignupDto userSignupDto, IAuthService authService) =>
 {
-    await authService.UserSignupAsync(userSignupDto);
-    return Results.NoContent();
+    try
+    {
+        await authService.UserSignupAsync(userSignupDto);
+        return Results.NoContent();
+    }
+    catch (ApplicationException ex)
+    {
+        return Results.BadRequest(ex.Message);
+    }
+    catch (Exception)
+    {
+        return Results.StatusCode(500);
+    }
 })
 .WithName("Signup")
 .WithTags("Auth");
@@ -149,6 +183,41 @@ app.MapPut("/api/users/{id}", async (
     await userService.UpdateUserAsync(id, updateUserDto);
     return Results.NoContent();
 });
+
+app.MapPost("/api/users/{id}/profile-picture", async (
+    [FromRoute] Guid id,
+    IFormFile file,
+    IUserService userService,
+    IWebHostEnvironment env) =>
+{
+    if (file is null || file.Length == 0)
+    {
+        return Results.BadRequest("No file uploaded.");
+    }
+
+    var webRootPath = env.WebRootPath ?? Path.Combine(env.ContentRootPath, "wwwroot");
+    var uploadsPath = Path.Combine(webRootPath, "uploads", "profiles");
+    if (!Directory.Exists(uploadsPath))
+    {
+        Directory.CreateDirectory(uploadsPath);
+    }
+
+    var fileName = $"{id}_{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
+    var filePath = Path.Combine(uploadsPath, fileName);
+
+    using (var stream = new FileStream(filePath, FileMode.Create))
+    {
+        await file.CopyToAsync(stream);
+    }
+
+    var fileUrl = $"/uploads/profiles/{fileName}";
+    await userService.UpdateUserProfilePictureAsync(id, fileUrl);
+
+    return Results.Ok(new { Url = fileUrl });
+})
+.WithName("UploadProfilePicture")
+.WithTags("Users")
+.DisableAntiforgery();
 
 app.MapGet("/api/ingredients", async (IIngredientService ingredientService) =>
     {
@@ -225,9 +294,9 @@ app.MapGet("/api/users/{userId}/mealplan", async (Guid userId, DateOnly weekStar
     .WithDescription("Fetches the meal plan for the specified week. If it does not exist, an empty plan is returned.")
     .Produces<MealPlanDto>();
 
-app.MapPost("/api/users/{userId}/mealplan/random", async (Guid userId, DateOnly weekStart, IMealService mealService) =>
+app.MapPost("/api/users/{userId}/mealplan/random", async (Guid userId, DateOnly weekStart, decimal? budget, IMealService mealService) =>
     {
-        var mealPlan = await mealService.GenerateRandomMealPlanAsync(userId, weekStart);
+        var mealPlan = await mealService.GenerateRandomMealPlanAsync(userId, weekStart, budget);
         return Results.Ok(mealPlan);
     })
     .WithName("GenerateRandomMealPlan")
@@ -286,5 +355,37 @@ app.MapDelete("/api/mealplan/{mealPlanId}", async (
     .WithTags("MealPlan")
     .WithSummary("Deletes an entire meal plan.")
     .WithDescription("Deletes a full meal plan including all days and items by meal plan ID.");
+
+app.MapGet("/api/users/{userId}/favorites", async (
+        Guid userId,
+        IFavoriteService favoriteService) =>
+    {
+        var favorites = await favoriteService.GetUserFavoriteRecipeIdsAsync(userId);
+        return Results.Ok(favorites);
+    })
+    .WithName("GetUserFavorites")
+    .WithTags("Favorites");
+
+app.MapPost("/api/users/{userId}/favorites/{recipeId}", async (
+        Guid userId,
+        Guid recipeId,
+        IFavoriteService favoriteService) =>
+    {
+        await favoriteService.AddFavoriteAsync(userId, recipeId);
+        return Results.NoContent();
+    })
+    .WithName("AddFavorite")
+    .WithTags("Favorites");
+
+app.MapDelete("/api/users/{userId}/favorites/{recipeId}", async (
+        Guid userId,
+        Guid recipeId,
+        IFavoriteService favoriteService) =>
+    {
+        await favoriteService.RemoveFavoriteAsync(userId, recipeId);
+        return Results.NoContent();
+    })
+    .WithName("RemoveFavorite")
+    .WithTags("Favorites");
 
 app.Run();

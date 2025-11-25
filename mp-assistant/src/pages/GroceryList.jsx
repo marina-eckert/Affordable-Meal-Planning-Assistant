@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { groceryApi, ingredientsApi } from "../services/api";
 
+import "./grocery-list.css";
+
 export default function GroceryList() {
   const [items, setItems] = useState([]);
   const [ingredients, setIngredients] = useState([]);
@@ -9,6 +11,7 @@ export default function GroceryList() {
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [showSuggestions, setShowSuggestions] = useState(false);
 
   const userId = localStorage.getItem("userId");
 
@@ -42,6 +45,7 @@ export default function GroceryList() {
       await loadData();
       setSelectedIngredient("");
       setQuantity(1);
+      setShowSuggestions(false);
     } catch (err) {
       setError("Failed to add item: " + err.message);
       console.error(err);
@@ -74,6 +78,11 @@ export default function GroceryList() {
     }
   };
 
+  // Filter suggestions based on input
+  const filteredIngredients = ingredients.filter(ing =>
+    ing.name.toLowerCase().includes(selectedIngredient.toLowerCase())
+  );
+
   if (loading) {
     return (
       <div className="page">
@@ -101,36 +110,45 @@ export default function GroceryList() {
 
       <div className="card grocery-card">
         <form onSubmit={addItem} className="add-form">
-          <select
-            value={selectedIngredient}
-            onChange={(e) => setSelectedIngredient(e.target.value)}
-            required
-            style={{
-              flex: 1,
-              padding: "0.75rem",
-              borderRadius: "4px",
-              border: "1px solid #ddd",
-            }}
-          >
-            <option value="">Select an ingredient...</option>
-            {ingredients.map((ing) => (
-              <option key={ing.id} value={ing.id}>
-                {ing.name}
-              </option>
-            ))}
-          </select>
+          <div className="autocomplete-wrapper">
+            <input
+              type="text"
+              className="ingredient-input"
+              value={selectedIngredient}
+              onChange={(e) => {
+                setSelectedIngredient(e.target.value);
+                setShowSuggestions(true);
+              }}
+              onFocus={() => setShowSuggestions(true)}
+              onBlur={() => setTimeout(() => setShowSuggestions(false), 200)} // Delay to allow click
+              placeholder="Type or select an ingredient..."
+              required
+            />
+
+            {showSuggestions && selectedIngredient && filteredIngredients.length > 0 && (
+              <ul className="suggestions-list">
+                {filteredIngredients.map((ing) => (
+                  <li
+                    key={ing.id}
+                    className="suggestion-item"
+                    onClick={() => {
+                      setSelectedIngredient(ing.name);
+                      setShowSuggestions(false);
+                    }}
+                  >
+                    {ing.name}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
 
           <input
             type="number"
             min="1"
+            className="qty-input"
             value={quantity}
             onChange={(e) => setQuantity(Number(e.target.value))}
-            style={{
-              width: "80px",
-              padding: "0.75rem",
-              borderRadius: "4px",
-              border: "1px solid #ddd",
-            }}
           />
 
           <button type="submit" className="add-btn">

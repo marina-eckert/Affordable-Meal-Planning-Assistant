@@ -1,6 +1,6 @@
 import { useMemo, useState, useEffect } from "react";
 import "./recipes.css";
-import { recipesApi, groceryApi } from "../services/api";
+import { recipesApi, groceryApi, favoritesApi } from "../services/api";
 
 import smoothieBowl from "../assets/images/smoothie-bowl.jpeg";
 import salmonQuinoa from "../assets/images/salmon-quinoa.jpg";
@@ -61,12 +61,15 @@ export default function RecipesPage() {
   const loadData = async () => {
     try {
       setLoading(true);
-      const backendRecipes = await recipesApi.getAll();
+      const [backendRecipes, favoriteIds] = await Promise.all([
+        recipesApi.getAll(),
+        favoritesApi.getUserFavorites(userId),
+      ]);
 
       const transformedRecipes = backendRecipes.map((recipe) => ({
         id: recipe.id,
         title: recipe.name,
-        categories: ["lunch"],
+        categories: [recipe.category.toLowerCase()],
         minutes: recipe.durationInMinutes,
         pricePerServing: recipe.price,
         rating: recipe.rating,
@@ -74,7 +77,7 @@ export default function RecipesPage() {
         tags: [],
         ingredients: recipe.ingredients.map((ing) => ing.name),
         recipe: `Delicious ${recipe.name} recipe.`,
-        isFavorite: false,
+        isFavorite: favoriteIds.includes(recipe.id),
         addedToGrocery: false,
         backendIngredients: recipe.ingredients,
       }));
@@ -122,10 +125,23 @@ export default function RecipesPage() {
     return r;
   }, [recipes, active, query, sortKey, budgetFilter]);
 
-  const toggleFavorite = (id) =>
-    setRecipes((prev) =>
-      prev.map((r) => (r.id === id ? { ...r, isFavorite: !r.isFavorite } : r))
-    );
+  const toggleFavorite = async (id) => {
+    try {
+      const recipe = recipes.find((r) => r.id === id);
+      if (recipe.isFavorite) {
+        await favoritesApi.removeFavorite(userId, id);
+      } else {
+        await favoritesApi.addFavorite(userId, id);
+      }
+
+      setRecipes((prev) =>
+        prev.map((r) => (r.id === id ? { ...r, isFavorite: !r.isFavorite } : r))
+      );
+    } catch (err) {
+      console.error("Failed to toggle favorite:", err);
+      alert("Failed to update favorite. Please try again.");
+    }
+  };
 
   const addIngredientsToGrocery = async (recipeId) => {
     const recipe = recipes.find((r) => r.id === recipeId);
@@ -213,8 +229,8 @@ export default function RecipesPage() {
               {addingToGrocery === openRecipe.id
                 ? "Adding..."
                 : openRecipe.addedToGrocery
-                ? "✓ Added to Grocery List"
-                : "Add All Ingredients to Grocery List"}
+                  ? "✓ Added to Grocery List"
+                  : "Add All Ingredients to Grocery List"}
             </button>
           </div>
         </div>
@@ -336,8 +352,8 @@ export default function RecipesPage() {
                     {addingToGrocery === r.id
                       ? "Adding..."
                       : r.addedToGrocery
-                      ? "✓ Added"
-                      : "Add to Grocery"}
+                        ? "✓ Added"
+                        : "Add to Grocery"}
                   </button>
                 </div>
               </div>
@@ -402,8 +418,8 @@ export default function RecipesPage() {
                   {addingToGrocery === r.id
                     ? "Adding..."
                     : r.addedToGrocery
-                    ? "✓ Added to Grocery"
-                    : "Add to Grocery List"}
+                      ? "✓ Added to Grocery"
+                      : "Add to Grocery List"}
                 </button>
               </div>
             </div>

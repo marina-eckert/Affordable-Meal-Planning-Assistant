@@ -29,14 +29,8 @@ export default function Footer() {
   return (
     <footer className="footer">
       <div className="footer-left">
-        <img
-          src="/user-avatar.png"
-          alt="User avatar"
-          className="footer-avatar"
-        />
         <div>
           <div className="footer-name">{userName}</div>
-          <div className="footer-plan">Free Plan</div>
         </div>
       </div>
 

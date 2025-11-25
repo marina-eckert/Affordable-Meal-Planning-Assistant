@@ -198,7 +198,8 @@ export default function MealPlanner() {
     try {
       const data = await mealPlanApi.generateRandom(
         userId,
-        formatDateOnly(weekStart)
+        formatDateOnly(weekStart),
+        weeklyBudget
       );
       setMealPlanId(data.id);
       setPlan(transformMealPlanToWeekView(data));
@@ -298,7 +299,7 @@ export default function MealPlanner() {
             value={weeklyBudget}
             onChange={(e) => setWeeklyBudget(Number(e.target.value))}
           >
-            {[50, 60, 70, 80, 90, 100].map((v) => (
+            {[70, 80, 90, 100, 120].map((v) => (
               <option value={v} key={v}>
                 Budget: ${v}
               </option>

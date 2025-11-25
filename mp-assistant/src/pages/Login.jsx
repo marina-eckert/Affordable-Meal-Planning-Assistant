@@ -18,6 +18,11 @@ const Login = () => {
     try {
       const response = await authApi.login(email, password);
       console.log("Login successful:", response);
+
+      // Store user info
+      if (response.userName) localStorage.setItem("userName", response.userName);
+      if (response.profilePictureUrl) localStorage.setItem("profilePictureUrl", response.profilePictureUrl);
+
       navigate("/planner");
     } catch (err) {
       setError(

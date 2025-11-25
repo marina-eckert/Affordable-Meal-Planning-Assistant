@@ -2,6 +2,19 @@
 
 A comprehensive web application that helps users create weekly meal plans within their budget. Designed to make meal planning simple, cost-effective, and personalized for every household.
 
+## Table of Contents
+- [Features](#features)
+- [Architecture](#architecture)
+- [Installation & Setup](#installation--setup)
+- [API Endpoints](#api-endpoints-summary)
+- [Configuration](#configuration)
+- [Running the App](#running-the-app)
+- [Project Structure](#project-structure)
+- [Database Schema](#database-schema)
+- [Authentication System](#authentication-system)
+- [Troubleshooting](#troubleshooting)
+
+
 ## Features
 
 - **User Authentication**: JWT-based login and signup system

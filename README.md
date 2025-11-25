@@ -107,7 +107,7 @@ cd ../mp-assistant && npm install && npm run dev
 - **Database**: localhost:1433
 
 ## Project Structure
-
+```
 Affordable-Meal-Planning-Assistant/
 ├── backend/
 │   ├── src/MPA.API/
@@ -142,7 +142,7 @@ Affordable-Meal-Planning-Assistant/
 │
 ├── mealplanexample.json
 └── README.md
-
+```
 ## Database Schema
 - Users
 - Recipes

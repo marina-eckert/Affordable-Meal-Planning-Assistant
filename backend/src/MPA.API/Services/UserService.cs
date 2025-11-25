@@ -24,7 +24,7 @@ public class UserService : IUserService
             throw new ApplicationException("User was not found.");
         }
 
-        return new UserDto(user.Id, user.Email!, user.UserName!, user.DietaryPreference, user.WeeklyBudgetInDollars);
+        return new UserDto(user.Id, user.Email!, user.UserName!, user.DietaryPreference, user.WeeklyBudgetInDollars, user.ProfilePictureUrl);
     }
 
     public async Task<UserDto> UpdateUserAsync(
@@ -55,6 +55,23 @@ public class UserService : IUserService
 
         await _dbContext.SaveChangesAsync(cancellationToken);
         
-        return new UserDto(user.Id, user.Email!, user.UserName!, user.DietaryPreference, user.WeeklyBudgetInDollars);
+        return new UserDto(user.Id, user.Email!, user.UserName!, user.DietaryPreference, user.WeeklyBudgetInDollars, user.ProfilePictureUrl);
+    }
+
+
+    public async Task UpdateUserProfilePictureAsync(
+        Guid id,
+        string profilePictureUrl,
+        CancellationToken cancellationToken = default)
+    {
+        var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+        if (user is null)
+        {
+            throw new ApplicationException("User was not found.");
+        }
+
+        user.ProfilePictureUrl = profilePictureUrl;
+        _dbContext.Users.Update(user);
+        await _dbContext.SaveChangesAsync(cancellationToken);
     }
 }

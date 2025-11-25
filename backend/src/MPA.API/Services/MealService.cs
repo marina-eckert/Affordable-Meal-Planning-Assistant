@@ -35,11 +35,22 @@ public class MealService : IMealService
     
     public async Task<MealPlanDto> GenerateRandomMealPlanAsync(
         Guid userId, 
-        DateOnly weekStart)
+        DateOnly weekStart,
+        decimal? budget = null)
     {
         weekStart = weekStart.AddDays(-(int)weekStart.DayOfWeek + (weekStart.DayOfWeek == DayOfWeek.Sunday ? -6 : 1));
 
         var recipes = await _context.Recipes.ToListAsync();
+        
+        // Group recipes by category
+        var breakfastRecipes = recipes.Where(r => r.Category?.Equals("Breakfast", StringComparison.OrdinalIgnoreCase) ?? false).ToList();
+        var lunchRecipes = recipes.Where(r => r.Category?.Equals("Lunch", StringComparison.OrdinalIgnoreCase) ?? false).ToList();
+        var dinnerRecipes = recipes.Where(r => r.Category?.Equals("Dinner", StringComparison.OrdinalIgnoreCase) ?? false).ToList();
+
+        // Fallback
+        if (breakfastRecipes.Count == 0) breakfastRecipes = recipes;
+        if (lunchRecipes.Count == 0) lunchRecipes = recipes;
+        if (dinnerRecipes.Count == 0) dinnerRecipes = recipes;
 
         var mealPlan = new MealPlan
         {
@@ -47,6 +58,28 @@ public class MealService : IMealService
             UserId = userId,
             WeekStart = weekStart,
         };
+
+        var allSelectedItems = new List<(MealPlanDayItem Item, decimal Price, string Category)>();
+
+        // Helper to get a random unique sequence of recipes
+        Queue<Recipe> GetShuffledQueue(List<Recipe> source)
+        {
+            return new Queue<Recipe>(source.OrderBy(_ => _random.Next()));
+        }
+
+        var breakfastQueue = GetShuffledQueue(breakfastRecipes);
+        var lunchQueue = GetShuffledQueue(lunchRecipes);
+        var dinnerQueue = GetShuffledQueue(dinnerRecipes);
+
+        Recipe GetNextRecipe(Queue<Recipe> queue, List<Recipe> source)
+        {
+            if (queue.Count == 0)
+            {
+                // Reshuffle if we ran out
+                foreach (var r in source.OrderBy(_ => _random.Next())) queue.Enqueue(r);
+            }
+            return queue.Dequeue();
+        }
 
         for (var i = 0; i < 7; i++)
         {
@@ -59,17 +92,105 @@ public class MealService : IMealService
 
             foreach (MealType mealType in Enum.GetValues(typeof(MealType)))
             {
-                var recipe = recipes[_random.Next(recipes.Count)];
+                Recipe recipe;
+                string category;
+                switch (mealType)
+                {
+                    case MealType.Breakfast:
+                        recipe = GetNextRecipe(breakfastQueue, breakfastRecipes);
+                        category = "Breakfast";
+                        break;
+                    case MealType.Lunch:
+                        recipe = GetNextRecipe(lunchQueue, lunchRecipes);
+                        category = "Lunch";
+                        break;
+                    case MealType.Dinner:
+                        recipe = GetNextRecipe(dinnerQueue, dinnerRecipes);
+                        category = "Dinner";
+                        break;
+                    default:
+                        recipe = recipes[_random.Next(recipes.Count)];
+                        category = "Other";
+                        break;
+                }
 
-                day.Items.Add(new MealPlanDayItem
+                var item = new MealPlanDayItem
                 {
                     Id = Guid.NewGuid(),
                     MealType = mealType,
                     RecipeId = recipe.Id
-                });
+                };
+                
+                day.Items.Add(item);
+                allSelectedItems.Add((item, recipe.Price, category));
             }
 
             mealPlan.Days.Add(day);
+        }
+
+        // Budget Optimization
+        if (budget.HasValue)
+        {
+            var totalCost = allSelectedItems.Sum(x => x.Price);
+            var maxIterations = 200; 
+            var iteration = 0;
+
+            while (totalCost > budget.Value && iteration < maxIterations)
+            {
+                // Sort items by price descending to find candidates to swap out
+                var sortedItems = allSelectedItems.OrderByDescending(x => x.Price).ToList();
+                bool swapped = false;
+
+                foreach (var (item, currentPrice, category) in sortedItems)
+                {
+                    // Find cheaper alternatives in the same category
+                    List<Recipe> candidates = category switch
+                    {
+                        "Breakfast" => breakfastRecipes,
+                        "Lunch" => lunchRecipes,
+                        "Dinner" => dinnerRecipes,
+                        _ => recipes
+                    };
+
+                    // Filter for strictly cheaper items
+                    var cheaperOptions = candidates
+                        .Where(r => r.Price < currentPrice)
+                        .OrderBy(r => r.Price) // Try the cheapest ones first to reduce cost fast
+                        .ToList();
+
+                    if (cheaperOptions.Count > 0)
+                    {
+                        // Try to find one that isn't already used to maintain variety
+                        var usedRecipeIds = allSelectedItems.Select(x => x.Item.RecipeId).ToHashSet();
+                        var bestOption = cheaperOptions.FirstOrDefault(r => !usedRecipeIds.Contains(r.Id));
+
+                        // If all cheaper options are already used, just pick the absolute cheapest to satisfy budget
+                        if (bestOption == null)
+                        {
+                            bestOption = cheaperOptions.First();
+                        }
+
+                        // Perform Swap
+                        item.RecipeId = bestOption.Id;
+                        
+                        // Update tracking list
+                        allSelectedItems.RemoveAll(x => x.Item == item);
+                        allSelectedItems.Add((item, bestOption.Price, category));
+                        
+                        totalCost = allSelectedItems.Sum(x => x.Price);
+                        swapped = true;
+                        break; // Restart loop to re-evaluate with new total
+                    }
+                }
+
+                if (!swapped)
+                {
+                    // If we iterated through all items and couldn't find ANY cheaper alternative for ANY item, we are stuck.
+                    break; 
+                }
+
+                iteration++;
+            }
         }
 
         await _context.MealPlans.AddAsync(mealPlan);
@@ -209,7 +330,7 @@ public class MealService : IMealService
 
     private static RecipeDto MapToModel(Recipe recipe)
     {
-        return new RecipeDto(recipe.Id, recipe.Name, recipe.ImageUrl, recipe.DurationMinutes, recipe.Price,
+        return new RecipeDto(recipe.Id, recipe.Name, recipe.Category, recipe.ImageUrl, recipe.DurationMinutes, recipe.Price,
             recipe.Rating, []);
     }
 

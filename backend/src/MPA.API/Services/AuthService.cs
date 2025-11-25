@@ -33,18 +33,18 @@ public class AuthService : IAuthService
         var user = await _userManager.FindByEmailAsync(userLoginDto.Email);
         if (user is null)
         {
-            throw new ApplicationException("User was not found");
+            throw new ApplicationException("No account found with this email.");
         }
 
         var signInResult = await _signInManager.PasswordSignInAsync(user, userLoginDto.Password, false, false);
         if (!signInResult.Succeeded)
         {
-            throw new ApplicationException("Incorrect email or password");
+            throw new ApplicationException("Incorrect email or password.");
         }
 
         var authToken = await GenerateJwtTokenAsync(user);
         
-        return new JwtTokenResponseDto(user.Id, authToken);
+        return new JwtTokenResponseDto(user.Id, authToken, user.UserName!, user.ProfilePictureUrl);
     }
 
     public async Task UserSignupAsync(
@@ -53,7 +53,7 @@ public class AuthService : IAuthService
         var existingUser = await _userManager.FindByEmailAsync(userSignupDto.Email);
         if (existingUser is not null)
         {
-            throw new ApplicationException("User with this email already exists");
+            throw new ApplicationException("An account with this email already exists.");
         }
         
         var user = new User

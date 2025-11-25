@@ -27,10 +27,44 @@ public class GroceryItemervice : IGroceryItemService
 
     public async Task AddGroceryItemAsync(Guid userId, AddGroceryItemDto addGroceryItemDto)
     {
+        Guid ingredientId;
+
+        if (addGroceryItemDto.IngredientId.HasValue)
+        {
+            ingredientId = addGroceryItemDto.IngredientId.Value;
+        }
+        else if (!string.IsNullOrWhiteSpace(addGroceryItemDto.IngredientName))
+        {
+            // Check if ingredient exists by name
+            var existingIngredient = await _context.Ingredients
+                .FirstOrDefaultAsync(i => i.Name.ToLower() == addGroceryItemDto.IngredientName.ToLower());
+
+            if (existingIngredient != null)
+            {
+                ingredientId = existingIngredient.Id;
+            }
+            else
+            {
+                // Create new ingredient
+                var newIngredient = new Ingredient
+                {
+                    Id = Guid.NewGuid(),
+                    Name = addGroceryItemDto.IngredientName
+                };
+                _context.Ingredients.Add(newIngredient);
+                await _context.SaveChangesAsync();
+                ingredientId = newIngredient.Id;
+            }
+        }
+        else
+        {
+            throw new ApplicationException("Ingredient ID or Name must be provided.");
+        }
+
         var groceryItem = new GroceryItem
         {
             UserId = userId,
-            IngredientId = addGroceryItemDto.IngredientId,
+            IngredientId = ingredientId,
             Quantity = addGroceryItemDto.Quantity
         };
         

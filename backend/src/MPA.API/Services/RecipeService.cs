@@ -28,6 +28,7 @@ public class RecipeService : IRecipeService
         return recipes.Select(x => new RecipeDto(
             x.Id,
             x.Name,
+            x.Category,
             x.ImageUrl,
             x.DurationMinutes,
             x.Price,

@@ -63,6 +63,63 @@ cd ../mp-assistant
 npm install
 npm run dev
 ```
+## API Endpoints (Summary)
+
+All endpoints require authentication via JWT Bearer token (except `/api/auth/*`).
+For detailed parameter info and response schemas, see Swagger at http://localhost:1501/swagger
+
+### Authentication
+```
+POST /api/auth/login          # Returns JWT token
+POST /api/auth/signup         # Creates new user account
+```
+
+### Users
+```
+GET  /api/users/{id}                       # Get user profile
+PUT  /api/users/{id}                       # Update user profile
+POST /api/users/{id}/profile-picture       # Upload profile picture
+```
+
+### Ingredients
+```
+GET /api/ingredients          # List all ingredients
+```
+
+### Recipes
+```
+GET /api/recipes              # List all recipes with ingredients
+```
+
+### Grocery List
+```
+GET    /api/users/{userId}/grocery-list    # Get user's grocery list
+POST   /api/users/{userId}/grocery-list    # Add item to grocery list
+PUT    /api/grocery-list/items/{id}        # Update grocery item quantity
+DELETE /api/grocery-list/items/{id}        # Remove item from grocery list
+```
+
+### Meal Plans
+```
+GET    /api/users/{userId}/mealplan                    # Get meal plan for a week
+POST   /api/users/{userId}/mealplan/random             # Generate random meal plan with optional budget
+POST   /api/users/{userId}/mealplan/item               # Add meal to a specific day
+PUT    /api/mealplan/items/{mealPlanDayItemId}         # Update meal item with new recipe
+DELETE /api/mealplan/items/{mealPlanDayItemId}         # Delete meal item from plan
+DELETE /api/mealplan/{mealPlanId}                      # Delete entire meal plan
+```
+
+### Favorites
+```
+GET    /api/users/{userId}/favorites              # Get user's favorite recipes
+POST   /api/users/{userId}/favorites/{recipeId}   # Add recipe to favorites
+DELETE /api/users/{userId}/favorites/{recipeId}   # Remove recipe from favorites
+```
+
+### AI Chat
+```
+POST /api/chat                # Send message to AI assistant for meal planning help
+```
 
 ## Configuration
 

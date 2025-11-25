@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://localhost:1501/api";
+const API_BASE_URL = `http://${window.location.hostname}:1501/api`;
 
 // Helper function to get auth token
 const getAuthToken = () => localStorage.getItem("authToken");
@@ -30,6 +30,7 @@ export const authApi = {
     if (data.token) {
       localStorage.setItem("authToken", data.token);
       localStorage.setItem("userId", data.userId);
+      // These will be set in Login.jsx from the response, but good to have them in the data object
     }
     return data;
   },
@@ -68,6 +69,20 @@ export const usersApi = {
         Authorization: `Bearer ${getAuthToken()}`,
       },
       body: JSON.stringify(userData),
+    });
+    return handleResponse(response);
+  },
+
+  uploadProfilePicture: async (userId, file) => {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const response = await fetch(`${API_BASE_URL}/users/${userId}/profile-picture`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${getAuthToken()}`,
+      },
+      body: formData,
     });
     return handleResponse(response);
   },
@@ -111,18 +126,25 @@ export const groceryApi = {
     return handleResponse(response);
   },
 
-  addItem: async (userId, ingredientId, quantity) => {
-    const response = await fetch(
-      `${API_BASE_URL}/users/${userId}/grocery-list`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${getAuthToken()}`,
-        },
-        body: JSON.stringify({ ingredientId, quantity }),
-      }
-    );
+  addItem: async (userId, ingredient, quantity) => {
+    const body = { quantity };
+    // Check if ingredient is a UUID (existing ID) or a name
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(ingredient);
+
+    if (isUuid) {
+      body.ingredientId = ingredient;
+    } else {
+      body.ingredientName = ingredient;
+    }
+
+    const response = await fetch(`${API_BASE_URL}/users/${userId}/grocery-list`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getAuthToken()}`,
+      },
+      body: JSON.stringify(body),
+    });
     return handleResponse(response);
   },
 
@@ -169,15 +191,17 @@ export const mealPlanApi = {
     return handleResponse(response);
   },
 
-  generateRandom: async (userId, weekStart) => {
-    const response = await fetch(
-      `${API_BASE_URL}/users/${userId}/mealplan/random?weekStart=${weekStart}`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${getAuthToken()}`,
-        },
-      }
+  generateRandom: async (userId, weekStart, budget) => {
+    const url = new URL(`${API_BASE_URL}/users/${userId}/mealplan/random`);
+    url.searchParams.append("weekStart", weekStart);
+    if (budget) url.searchParams.append("budget", budget);
+
+    const response = await fetch(url.toString(), {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${getAuthToken()}`,
+      },
+    }
     );
     return handleResponse(response);
   },
@@ -230,6 +254,41 @@ export const mealPlanApi = {
     return handleResponse(response);
   },
 };
+export const favoritesApi = {
+  getUserFavorites: async (userId) => {
+    const response = await fetch(`${API_BASE_URL}/users/${userId}/favorites`, {
+      headers: {
+        Authorization: `Bearer ${getAuthToken()}`,
+      },
+    });
+    return handleResponse(response);
+  },
+  addFavorite: async (userId, recipeId) => {
+    const response = await fetch(
+      `${API_BASE_URL}/users/${userId}/favorites/${recipeId}`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${getAuthToken()}`,
+        },
+      }
+    );
+    return handleResponse(response);
+  },
+  removeFavorite: async (userId, recipeId) => {
+    const response = await fetch(
+      `${API_BASE_URL}/users/${userId}/favorites/${recipeId}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${getAuthToken()}`,
+        },
+      }
+    );
+    return handleResponse(response);
+  },
+};
+
 // Chat API
 export const chatApi = {
   sendMessage: async (message) => {

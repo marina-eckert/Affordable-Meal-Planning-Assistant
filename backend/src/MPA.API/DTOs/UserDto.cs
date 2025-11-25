@@ -7,4 +7,5 @@ public record UserDto(
     string Email,
     string UserName,
     DietaryPreference DietaryPreference,
-    decimal WeeklyBudgetInDollars);
+    decimal WeeklyBudgetInDollars,
+    string? ProfilePictureUrl);

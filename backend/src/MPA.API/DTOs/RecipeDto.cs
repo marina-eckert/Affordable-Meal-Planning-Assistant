@@ -3,6 +3,7 @@
 public record RecipeDto(
     Guid Id,
     string Name,
+    string Category,
     string ImageUrl,
     int DurationInMinutes,
     decimal Price,

@@ -14,4 +14,13 @@ public class AppDbContext : IdentityDbContext<User, Role, Guid>
     public DbSet<MealPlan> MealPlans { get; init; }
     public DbSet<MealPlanDay> MealPlanDays { get; init; }
     public DbSet<MealPlanDayItem> MealPlanDayItems { get; init; }
+    public DbSet<Favorite> Favorites { get; init; }
+
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        base.OnModelCreating(builder);
+
+        builder.Entity<Favorite>()
+            .HasKey(f => new { f.UserId, f.RecipeId });
+    }
 }

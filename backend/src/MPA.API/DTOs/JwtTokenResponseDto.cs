@@ -2,4 +2,6 @@
 
 public record JwtTokenResponseDto(
     Guid UserId,
-    string Token);
+    string Token,
+    string UserName,
+    string? ProfilePictureUrl);

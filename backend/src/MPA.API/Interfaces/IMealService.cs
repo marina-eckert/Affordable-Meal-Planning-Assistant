@@ -8,9 +8,7 @@ public interface IMealService
         Guid userId,
         DateOnly weekStart);
 
-    Task<MealPlanDto> GenerateRandomMealPlanAsync(
-        Guid userId, 
-        DateOnly weekStart);
+    Task<MealPlanDto> GenerateRandomMealPlanAsync(Guid userId, DateOnly weekStart, decimal? budget = null);
 
     Task<MealPlanDayItemDto> AddMealPlanDayItemAsync(
         Guid userId,

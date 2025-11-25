@@ -1,5 +1,6 @@
 ﻿namespace MPA.API.DTOs;
 
 public record AddGroceryItemDto(
-    Guid IngredientId,
+    Guid? IngredientId,
+    string? IngredientName,
     int Quantity);

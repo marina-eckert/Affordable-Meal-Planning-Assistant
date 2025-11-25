@@ -12,4 +12,5 @@ public interface IUserService
         Guid id,
         UpdateUserDto updateUserDto,
         CancellationToken cancellationToken = default);
+    Task UpdateUserProfilePictureAsync(Guid id, string profilePictureUrl, CancellationToken cancellationToken = default);
 }

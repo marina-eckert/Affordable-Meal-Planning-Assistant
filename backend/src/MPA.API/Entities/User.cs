@@ -7,4 +7,5 @@ public class User : IdentityUser<Guid>
 {
     public DietaryPreference DietaryPreference { get; set; }
     public decimal WeeklyBudgetInDollars { get; set; }
+    public string? ProfilePictureUrl { get; set; }
 }

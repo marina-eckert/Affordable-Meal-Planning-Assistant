@@ -22,6 +22,7 @@ public class RecipeSeeder : IEntitySeeder
             {
                 Id = Guid.NewGuid(),
                 Name = "Chicken Rice Bowl",
+                Category = "Lunch",
                 ImageUrl = "/images/recipes/chicken-rice-bowl.jpg",
                 DurationMinutes = 25,
                 Price = 6.99m,
@@ -41,6 +42,7 @@ public class RecipeSeeder : IEntitySeeder
             {
                 Id = Guid.NewGuid(),
                 Name = "Vegetable Stir Fry",
+                Category = "Dinner",
                 ImageUrl = "/images/recipes/vegetable-stir-fry.jpg",
                 DurationMinutes = 15,
                 Price = 4.20m,
@@ -61,6 +63,7 @@ public class RecipeSeeder : IEntitySeeder
             {
                 Id = Guid.NewGuid(),
                 Name = "Beef Pasta Bolognese",
+                Category = "Dinner",
                 ImageUrl = "/images/recipes/bolognese.jpg",
                 DurationMinutes = 30,
                 Price = 7.40m,
@@ -81,6 +84,7 @@ public class RecipeSeeder : IEntitySeeder
             {
                 Id = Guid.NewGuid(),
                 Name = "Greek Salad",
+                Category = "Lunch",
                 ImageUrl = "/images/recipes/greek-salad.jpg",
                 DurationMinutes = 10,
                 Price = 3.90m,
@@ -101,6 +105,7 @@ public class RecipeSeeder : IEntitySeeder
             {
                 Id = Guid.NewGuid(),
                 Name = "Salmon with Vegetables",
+                Category = "Dinner",
                 ImageUrl = "/images/recipes/salmon-veggies.jpg",
                 DurationMinutes = 20,
                 Price = 9.99m,
@@ -121,6 +126,7 @@ public class RecipeSeeder : IEntitySeeder
             {
                 Id = Guid.NewGuid(),
                 Name = "Chicken Caesar Salad",
+                Category = "Lunch",
                 ImageUrl = "/images/recipes/caesar-salad.jpg",
                 DurationMinutes = 12,
                 Price = 5.99m,
@@ -141,6 +147,7 @@ public class RecipeSeeder : IEntitySeeder
             {
                 Id = Guid.NewGuid(),
                 Name = "Shrimp Noodle Bowl",
+                Category = "Dinner",
                 ImageUrl = "/images/recipes/shrimp-noodles.jpg",
                 DurationMinutes = 18,
                 Price = 8.50m,
@@ -160,6 +167,7 @@ public class RecipeSeeder : IEntitySeeder
             {
                 Id = Guid.NewGuid(),
                 Name = "Avocado Toast",
+                Category = "Breakfast",
                 ImageUrl = "/images/recipes/avocado-toast.jpg",
                 DurationMinutes = 5,
                 Price = 2.90m,
@@ -177,6 +185,7 @@ public class RecipeSeeder : IEntitySeeder
             {
                 Id = Guid.NewGuid(),
                 Name = "Lentil Soup",
+                Category = "Lunch",
                 ImageUrl = "/images/recipes/lentil-soup.jpg",
                 DurationMinutes = 35,
                 Price = 3.40m,
@@ -197,6 +206,7 @@ public class RecipeSeeder : IEntitySeeder
             {
                 Id = Guid.NewGuid(),
                 Name = "Omelette",
+                Category = "Breakfast",
                 ImageUrl = "/images/recipes/omelette.jpg",
                 DurationMinutes = 8,
                 Price = 1.80m,
@@ -215,6 +225,7 @@ public class RecipeSeeder : IEntitySeeder
             {
                 Id = Guid.NewGuid(),
                 Name = "Tofu Vegetable Bowl",
+                Category = "Lunch",
                 ImageUrl = "/images/recipes/tofu-bowl.jpg",
                 DurationMinutes = 18,
                 Price = 5.20m,
@@ -234,6 +245,7 @@ public class RecipeSeeder : IEntitySeeder
             {
                 Id = Guid.NewGuid(),
                 Name = "Fruit Smoothie",
+                Category = "Breakfast",
                 ImageUrl = "/images/recipes/smoothie.jpg",
                 DurationMinutes = 3,
                 Price = 2.50m,

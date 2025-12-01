@@ -21,7 +21,7 @@ jobs:
 
     - name: Build backend image
       run: |
-        docker build -t backend:latest ./backend
+        docker build -t backend:latest ./backend/src/MPA.API
 
     - name: Save frontend image and send to VM
       run: |

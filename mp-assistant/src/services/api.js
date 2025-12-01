@@ -1,4 +1,4 @@
-const API_BASE_URL = `http://${window.location.hostname}:1501/api`;
+const API_BASE_URL = `http://backend-service:8080/api`;
 
 // Helper function to get auth token
 const getAuthToken = () => localStorage.getItem("authToken");

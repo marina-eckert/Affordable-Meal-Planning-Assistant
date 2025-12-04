@@ -8,12 +8,23 @@ import Register from "../pages/Register";
 import Recipes from "../pages/Recipes";
 import MealPlanner from "../pages/MealPlanner";
 import Insights from "../pages/Insights";
+import LandingPage from "../pages/LandingPage";
 
 const AppRoutes = () => {
   return (
     <Routes>
+
       <Route
         path="/"
+        element={
+         
+            <LandingPage />
+         
+        }
+      />
+
+      <Route
+        path="/login"
         element={
           <AuthLayout>
             <Login />
@@ -29,6 +40,8 @@ const AppRoutes = () => {
           </AuthLayout>
         }
       />
+
+       
 
       <Route
         path="/profile"
